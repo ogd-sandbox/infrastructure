@@ -1,5 +1,5 @@
-resource "aws_iam_role" "gha_oidc_assume_role_applications" {
-  name = "gha-oidc-assume-role-applications"
+resource "aws_iam_role" "gha_oidc_assume_role_infrastucture" {
+  name = "gha-oidc-assume-role-infrastucture"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -12,30 +12,26 @@ resource "aws_iam_role" "gha_oidc_assume_role_applications" {
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringLike" : {
-            "token.actions.githubusercontent.com:sub" : ["repo:ogd-sandbox/application:*"]
+            "token.actions.githubusercontent.com:sub" : ["repo:ogd-sandbox/infrastructure:*"]
           }
-        },
-
+        }
       }
     ]
   })
 }
 
-resource "aws_iam_role_policy" "gha_oidc_application_permissions" {
-  name = "gha-oidc-application-permissions"
-  role = aws_iam_role.gha_oidc_assume_role_applications.id
+resource "aws_iam_role_policy" "gha_oidc_infrastucture_permissions" {
+  name = "gha-oidc-infrastucture-permissions"
+  role = aws_iam_role.gha_oidc_assume_role_infrastucture.id
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action = [
-          "ecr:*",
-        ]
         Effect   = "Allow"
+        Action   = "*",
         Resource = "*"
       },
     ]
   })
 }
-
