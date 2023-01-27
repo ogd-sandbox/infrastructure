@@ -12,7 +12,7 @@ resource "aws_iam_role" "gha_oidc_assume_role_infrastucture" {
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringLike" : {
-            "token.actions.githubusercontent.com:sub" : ["repo:ogd-sandbox/infrastucture:*"]
+            "token.actions.githubusercontent.com:sub" : ["repo:ogd-sandbox/infrastructure:*"]
           }
         }
       }
