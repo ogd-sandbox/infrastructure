@@ -69,6 +69,21 @@ EOF
   }
 }
 
+data "aws_ssm_parameter" "by_name_new_relic_license_key" {
+  name = "/global/NEW_RELIC_LICENSE_KEY"
+}
+
+data "template_file" "task_template_application" {
+  template = file("../modules/ecs/templates/applicationtaskdefination.json.tpl")
+
+  vars = {
+    repository_url             = var.repository_url
+    new_relic_license_key      = data.aws_ssm_parameter.by_name_new_relic_license_key.value
+    application_container_port = var.application_container_port
+    awslogs_group              = "${aws_cloudwatch_log_group.production.name}"
+  }
+}
+
 resource "aws_ecs_task_definition" "application" {
   family                   = "application"
   task_role_arn            = aws_iam_role.application_ecs_task_role.arn
@@ -77,29 +92,5 @@ resource "aws_ecs_task_definition" "application" {
   cpu                      = 256
   memory                   = 512
   execution_role_arn       = aws_iam_role.application_ecs_execution_role.arn
-  container_definitions    = <<TASK_DEFINITION
-[
-  {
-    "name": "application",
-    "image": "${var.repository_url}:latest",
-    "cpu": 256,
-    "memory": 512,
-    "essential": true,
-    "portMappings": [
-      {
-        "containerPort": ${var.application_container_port},
-        "hostPort": ${var.application_container_port}
-      }
-    ],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.production.name}",
-        "awslogs-region": "eu-central-1",
-        "awslogs-stream-prefix": "application"
-        }
-    }
-  }
-]
-TASK_DEFINITION
+  container_definitions    = data.template_file.task_template_application.rendered
 }
