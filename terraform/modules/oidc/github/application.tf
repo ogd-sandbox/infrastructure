@@ -11,10 +11,11 @@ resource "aws_iam_role" "gha_oidc_assume_role_applications" {
         },
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
-          "StringEquals" : {
+          "StringLike" : {
             "token.actions.githubusercontent.com:sub" : ["repo:ogd-sandbox/application:*"]
           }
-        }
+        },
+
       }
     ]
   })
@@ -29,7 +30,7 @@ resource "aws_iam_role_policy" "gha_oidc_application_permissions" {
     Statement = [
       {
         Action = [
-          "ecr:*", 
+          "ecr:*",
         ]
         Effect   = "Allow"
         Resource = "*"
