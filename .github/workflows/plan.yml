@@ -3,7 +3,9 @@ on:
     types: [opened, synchronize, reopened]
 
 permissions:
+  id-token: write
   pull-requests: write 
+  contents: read
 
 name: Terraform Plan
 jobs:

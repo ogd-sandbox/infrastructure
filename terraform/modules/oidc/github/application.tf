@@ -12,10 +12,7 @@ resource "aws_iam_role" "gha_oidc_assume_role_applications" {
         "Action" : "sts:AssumeRoleWithWebIdentity",
         "Condition" : {
           "StringEquals" : {
-            "token.actions.githubusercontent.com:sub" : ["repo:ogd-sandbox/application"]
-          },
-          "StringEquals" : {
-            "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
+            "token.actions.githubusercontent.com:sub" : ["repo:ogd-sandbox/application:*"]
           }
         }
       }
