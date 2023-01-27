@@ -2,9 +2,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-defaults:
-  run:
-    working-directory: ./terraform/gazidizdaroglu
 permissions:
   pull-requests: write 
 
@@ -27,20 +24,28 @@ jobs:
 
       - name: Terraform fmt
         id: fmt
-        run: terraform fmt -check
+        run: |
+          cd terraform/gazidizdaroglu
+          terraform fmt -check
         continue-on-error: true
 
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: |
+          cd terraform/gazidizdaroglu
+          terraform init
 
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: |
+          cd terraform/gazidizdaroglu
+          terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color
+        run: |
+          cd terraform/gazidizdaroglu
+          terraform plan -no-color
         continue-on-error: true
 
       - uses: actions/github-script@v6
