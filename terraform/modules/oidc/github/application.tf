@@ -39,3 +39,11 @@ resource "aws_iam_role_policy" "gha_oidc_application_permissions" {
   })
 }
 
+data "aws_iam_policy" "ecs_full_access" {
+  arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "gha_oidc_application_permission_role_policy_attach_ecs_full_access" {
+  role       = aws_iam_role.gha_oidc_assume_role_applications.id
+  policy_arn = "${data.aws_iam_policy.ecs_full_access.arn}"
+}
