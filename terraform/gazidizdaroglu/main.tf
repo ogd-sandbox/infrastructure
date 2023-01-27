@@ -15,10 +15,10 @@ module "oidc_github" {
 }
 
 module "ecs" {
-  source = "../modules/ecs"
-  repository_url = "${module.ecr.application_repository_url}"
+  source                     = "../modules/ecs"
+  repository_url             = module.ecr.application_repository_url
   application_container_port = 3333
-  private_subnet_ids = "${module.vpc.private_subnet_ids}"
-  public_subnet_ids = "${module.vpc.public_subnet_ids}"
-  vpc_id = "${module.vpc.id}"
+  private_subnet_ids         = module.vpc.private_subnet_ids
+  public_subnet_ids          = module.vpc.public_subnet_ids
+  vpc_id                     = module.vpc.id
 }
