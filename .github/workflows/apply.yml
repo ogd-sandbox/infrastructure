@@ -13,6 +13,17 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Notify Slack Start
+        if: success()
+        id: slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          channel: deployment-notes
+          status: STARTING
+          color: warning
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -46,5 +57,16 @@ jobs:
         run: |
           cd terraform/gazidizdaroglu
           terraform apply -no-color -input=false -auto-approve
+
+      - name: Notify Slack Success
+        if: success()
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
+        uses: voxmedia/github-action-slack-notify-build@v1
+        with:
+          message_id: ${{ steps.slack.outputs.message_id }}
+          channel: deployment-notes
+          status: SUCCESS
+          color: good
 
       
